@@ -97,6 +97,31 @@ public class TestACMECollegeSystem {
         assertThat(students, hasSize(2));
     }
     
-    // TODO TACMECS 01 - Add your meaningful JUnit tests here.
+    @Test
+    public void test02_get_student_by_id_with_adminrole() throws JsonMappingException, JsonProcessingException {
+        Response response = webTarget
+            .register(adminAuth)
+            .path(STUDENT_RESOURCE_NAME)
+            .path("1")
+            .request()
+            .get();
+        assertThat(response.getStatus(), is(200));
+        Student student = response.readEntity(Student.class);
+        assertThat(student, is(not(org.hamcrest.CoreMatchers.nullValue())));
+        assertThat(student.getId(), is(1));
+    }
+    
+    @Test
+    public void test03_get_programs_with_adminrole() throws JsonMappingException, JsonProcessingException {
+        Response response = webTarget
+            .register(adminAuth)
+            .path(STUDENT_RESOURCE_NAME)
+            .path("program")
+            .request()
+            .get();
+        assertThat(response.getStatus(), is(200));
+        List<String> programs = response.readEntity(new GenericType<List<String>>(){});
+        assertThat(programs, is(not(empty())));
+    }
 
 }

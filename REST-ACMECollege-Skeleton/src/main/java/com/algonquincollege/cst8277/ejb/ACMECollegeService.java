@@ -49,6 +49,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.algonquincollege.cst8277.entity.Course;
 import com.algonquincollege.cst8277.entity.CourseRegistration;
+import com.algonquincollege.cst8277.entity.CourseRegistrationPK;
 import com.algonquincollege.cst8277.entity.Professor;
 import com.algonquincollege.cst8277.entity.SecurityRole;
 import com.algonquincollege.cst8277.entity.SecurityUser;
@@ -67,7 +68,12 @@ public class ACMECollegeService implements Serializable {
     private static final Logger LOG = LogManager.getLogger();
     
     private static final String READ_ALL_PROGRAMS = "SELECT name FROM program";
-    //TODO ACMECS01 - Add your query constants here.
+    
+    // Query constants
+    public static final String QUERY_ALL_COURSES = "Course.findAll";
+    public static final String QUERY_ALL_PROFESSORS = "Professor.findAll";
+    public static final String QUERY_ALL_STUDENT_CLUBS = "StudentClub.findAll";
+    public static final String QUERY_ALL_COURSE_REGISTRATIONS = "CourseRegistration.findAll";
     
     @PersistenceContext(name = PU_NAME)
     protected EntityManager em;
@@ -106,7 +112,9 @@ public class ACMECollegeService implements Serializable {
         String pwHash = pbAndjPasswordHash.generate(DEFAULT_USER_PASSWORD.toCharArray());
         userForNewStudent.setPwHash(pwHash);
         userForNewStudent.setStudent(newStudent);
-        SecurityRole userRole = /* TODO ACMEMS01 - Use NamedQuery on SecurityRole to find USER_ROLE */ null;
+        TypedQuery<SecurityRole> roleQuery = em.createNamedQuery(SecurityRole.SECURITY_ROLE_BY_NAME, SecurityRole.class);
+        roleQuery.setParameter(PARAM1, USER_ROLE);
+        SecurityRole userRole = roleQuery.getSingleResult();
         userForNewStudent.getRoles().add(userRole);
         userRole.getUsers().add(userForNewStudent);
         em.persist(userForNewStudent);
@@ -140,12 +148,12 @@ public class ACMECollegeService implements Serializable {
         Student student = getStudentById(id);
         if (student != null) {
             em.refresh(student);
-            /* TODO ACMEMS02 - Use NamedQuery on SecurityRole to find this related Physician
-               so that when we remove it, the relationship from SECURITY_USER table
-               is not dangling*/
-            TypedQuery<SecurityUser> findUser = em.<SecurityUser>createNamedQuery("SecurityUser.userByStudentId", SecurityUser.class).setParameter(PARAM1, id);
+            TypedQuery<SecurityUser> findUser = em.createNamedQuery(SecurityUser.SECURITY_USER_BY_STUDENT_ID, SecurityUser.class);
+            findUser.setParameter(PARAM1, id);
             SecurityUser sUser = findUser.getSingleResult();
-            em.remove(sUser);
+            if (sUser != null) {
+                em.remove(sUser);
+            }
             em.remove(student);
         }
         return student;
@@ -162,8 +170,149 @@ public class ACMECollegeService implements Serializable {
 		return programs;
     }
 
-	//TODO ACMECS02 - Add the rest of your CRUD methods here.
-	
-	
+	// CRUD methods for Course
+	public List<Course> getAllCourses() {
+		TypedQuery<Course> query = em.createNamedQuery(QUERY_ALL_COURSES, Course.class);
+		return query.getResultList();
+	}
+
+	public Course getCourseById(int id) {
+		return em.find(Course.class, id);
+	}
+
+	@Transactional
+	public Course persistCourse(Course newCourse) {
+		em.persist(newCourse);
+		return newCourse;
+	}
+
+	@Transactional
+	public Course updateCourseById(int id, Course courseWithUpdates) {
+		Course courseToBeUpdated = getCourseById(id);
+		if (courseToBeUpdated != null) {
+			em.refresh(courseToBeUpdated);
+			em.merge(courseWithUpdates);
+			em.flush();
+		}
+		return courseWithUpdates;
+	}
+
+	@Transactional
+	public Course deleteCourseById(int id) {
+		Course course = getCourseById(id);
+		if (course != null) {
+			em.refresh(course);
+			em.remove(course);
+		}
+		return course;
+	}
+
+	// CRUD methods for Professor
+	public List<Professor> getAllProfessors() {
+		TypedQuery<Professor> query = em.createNamedQuery(QUERY_ALL_PROFESSORS, Professor.class);
+		return query.getResultList();
+	}
+
+	public Professor getProfessorById(int id) {
+		return em.find(Professor.class, id);
+	}
+
+	@Transactional
+	public Professor persistProfessor(Professor newProfessor) {
+		em.persist(newProfessor);
+		return newProfessor;
+	}
+
+	@Transactional
+	public Professor updateProfessorById(int id, Professor professorWithUpdates) {
+		Professor professorToBeUpdated = getProfessorById(id);
+		if (professorToBeUpdated != null) {
+			em.refresh(professorToBeUpdated);
+			em.merge(professorWithUpdates);
+			em.flush();
+		}
+		return professorWithUpdates;
+	}
+
+	@Transactional
+	public Professor deleteProfessorById(int id) {
+		Professor professor = getProfessorById(id);
+		if (professor != null) {
+			em.refresh(professor);
+			em.remove(professor);
+		}
+		return professor;
+	}
+
+	// CRUD methods for StudentClub
+	public List<StudentClub> getAllStudentClubs() {
+		TypedQuery<StudentClub> query = em.createNamedQuery(QUERY_ALL_STUDENT_CLUBS, StudentClub.class);
+		return query.getResultList();
+	}
+
+	public StudentClub getStudentClubById(int id) {
+		return em.find(StudentClub.class, id);
+	}
+
+	@Transactional
+	public StudentClub persistStudentClub(StudentClub newStudentClub) {
+		em.persist(newStudentClub);
+		return newStudentClub;
+	}
+
+	@Transactional
+	public StudentClub updateStudentClubById(int id, StudentClub studentClubWithUpdates) {
+		StudentClub studentClubToBeUpdated = getStudentClubById(id);
+		if (studentClubToBeUpdated != null) {
+			em.refresh(studentClubToBeUpdated);
+			em.merge(studentClubWithUpdates);
+			em.flush();
+		}
+		return studentClubWithUpdates;
+	}
+
+	@Transactional
+	public StudentClub deleteStudentClubById(int id) {
+		StudentClub studentClub = getStudentClubById(id);
+		if (studentClub != null) {
+			em.refresh(studentClub);
+			em.remove(studentClub);
+		}
+		return studentClub;
+	}
+
+	// CRUD methods for CourseRegistration
+	public List<CourseRegistration> getAllCourseRegistrations() {
+		TypedQuery<CourseRegistration> query = em.createNamedQuery(QUERY_ALL_COURSE_REGISTRATIONS, CourseRegistration.class);
+		return query.getResultList();
+	}
+
+	public CourseRegistration getCourseRegistrationById(int studentId, int courseId) {
+		CourseRegistrationPK pk = new CourseRegistrationPK(studentId, courseId);
+		return em.find(CourseRegistration.class, pk);
+	}
+
+	@Transactional
+	public CourseRegistration persistCourseRegistration(CourseRegistration newCourseRegistration) {
+		em.persist(newCourseRegistration);
+		return newCourseRegistration;
+	}
+
+	@Transactional
+	public CourseRegistration updateCourseRegistration(CourseRegistration courseRegistrationWithUpdates) {
+		em.merge(courseRegistrationWithUpdates);
+		em.flush();
+		return courseRegistrationWithUpdates;
+	}
+
+	@Transactional
+	public CourseRegistration deleteCourseRegistration(int studentId, int courseId) {
+		CourseRegistration courseRegistration = getCourseRegistrationById(studentId, courseId);
+		if (courseRegistration != null) {
+			em.refresh(courseRegistration);
+			em.remove(courseRegistration);
+		}
+		return courseRegistration;
+	}
 	
 }
