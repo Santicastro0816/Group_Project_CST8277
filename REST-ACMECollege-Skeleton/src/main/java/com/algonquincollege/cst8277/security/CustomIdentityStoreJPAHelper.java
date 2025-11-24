@@ -7,7 +7,7 @@
  */
 package com.algonquincollege.cst8277.security;
 
-import static java.util.Collections.emptySet;
+import static java.util.Collections.emptySet; 
 
 import java.util.Set;
 import java.util.stream.Collectors;
