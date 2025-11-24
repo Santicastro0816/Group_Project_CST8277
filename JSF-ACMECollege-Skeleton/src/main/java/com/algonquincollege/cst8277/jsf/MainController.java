@@ -64,9 +64,12 @@ public class MainController implements Serializable, MyConstants {
     
     public void loadData() {
     	switch (optionChosen) {
-    		case STUDENT_MANAGEMENT: studentController.loadStudents();
-    		break;
-    		//TODO Add your own cases here
+        case STUDENT_MANAGEMENT:
+            studentController.loadStudents();
+            break;
+        //TODO Add your own cases here
+        default:
+            break;
     	}
     }
     

@@ -14,19 +14,14 @@ import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -49,6 +44,7 @@ import com.algonquincollege.cst8277.entity.NonAcademic;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "academic", discriminatorType = DiscriminatorType.INTEGER)
 @Access(AccessType.FIELD)
+@AttributeOverride(name = "id", column = @Column(name = "club_id"))
 @NamedQuery(name = StudentClub.ALL_STUDENT_CLUBS_QUERY, query = "SELECT sc FROM StudentClub sc")
 public class StudentClub extends PojoBase implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -64,13 +60,11 @@ public class StudentClub extends PojoBase implements Serializable {
 	protected String desc;
 
 	@Basic(optional = false)
-	@Column(name = "academic", nullable = false)
+	@Column(name = "academic", nullable = false, insertable = false, updatable = false)
 	protected boolean isAcademic;
 
-	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-	@JoinTable(name = "club_membership",
-		joinColumns = @JoinColumn(name = "club_id", referencedColumnName = "id"),
-		inverseJoinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"))
+	@ManyToMany(mappedBy = "studentClubs")
+	@JsonIgnore
 	protected Set<Student> studentMembers = new HashSet<Student>();
 	
 	@Transient

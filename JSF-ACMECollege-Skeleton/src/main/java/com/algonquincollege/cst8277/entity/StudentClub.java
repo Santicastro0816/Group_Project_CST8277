@@ -47,25 +47,41 @@ import com.algonquincollege.cst8277.entity.NonAcademic;
 //TODO SC01 - Add the missing annotations.
 //TODO SC02 - StudentClub has subclasses Academic and NonAcademic.  Look at lecture slides for InheritanceType.
 //TODO SC03 - Do we need a mapped super class?  If so, which one?
-public class StudentClub implements Serializable {
+@Entity
+@Table(name = "student_club")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "academic", discriminatorType = DiscriminatorType.INTEGER)
+@Access(AccessType.FIELD)
+@AttributeOverride(name = "id", column = @Column(name = "club_id"))
+@NamedQuery(name = StudentClub.ALL_STUDENT_CLUBS_QUERY, query = "SELECT sc FROM StudentClub sc")
+public class StudentClub extends PojoBase implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String ALL_STUDENT_CLUBS_QUERY = "StudentClub.findAll";
 
 	// TODO SC04 - Add the missing annotations.
+	@Basic(optional = false)
+	@Column(name = "name", nullable = false, length = 100)
 	protected String name;
 
 	// TODO SC05 - Add the missing annotations.
+	@Basic(optional = true)
+	@Column(name = "description", nullable = true, length = 500)
 	protected String desc;
 
 	// TODO SC06 - Add the missing annotations.
+	@Basic(optional = false)
+	@Column(name = "academic", nullable = false, insertable = false, updatable = false)
 	protected boolean isAcademic;
 
 	// TODO SC07 - Add the M:N annotation.  What should be the cascade and fetch types?
 	// TODO SC08 - Add other missing annotations.
+	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+	@JsonIgnore
 	protected Set<Student> studentMembers = new HashSet<Student>();
 	
 	// TODO SC09 - Add the missing annotations.
+	@Transient
 	protected boolean editable = false;
 
 	public StudentClub() {
@@ -101,7 +117,7 @@ public class StudentClub implements Serializable {
 		this.isAcademic = isAcademic;
 	}
 
-	// TODO SC10 - Is an annotation needed here?
+	// TODO SC10 - Is an annotation needed here? no
 	public Set<Student> getStudentMembers() {
 		return studentMembers;
 	}
