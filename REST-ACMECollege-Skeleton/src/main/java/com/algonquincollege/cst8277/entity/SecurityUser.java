@@ -46,14 +46,15 @@ public class SecurityUser implements Serializable, Principal {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "user_id")
   protected int id;
   
   @Basic(optional = false)
   @Column(name = "username", nullable = false, unique = true, length = 100)
   protected String username;
   
-  @Basic(optional = false)
-  @Column(name = "pw_hash", nullable = false, length = 255)
+  @Basic
+  @Column(name = "password_hash", nullable = false, length = 256)
   protected String pwHash;
   
   @ManyToOne(cascade = CascadeType.MERGE, optional = true, fetch = FetchType.LAZY)
@@ -61,9 +62,9 @@ public class SecurityUser implements Serializable, Principal {
   protected Student student;
   
   @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-  @JoinTable(name = "security_user_security_role",
-      joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+  @JoinTable(name = "user_has_role",
+      joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
   protected Set<SecurityRole> roles = new HashSet<SecurityRole>();
 
   public SecurityUser() {

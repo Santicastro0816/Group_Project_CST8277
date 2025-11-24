@@ -10,6 +10,7 @@ package com.algonquincollege.cst8277.jsf;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -53,8 +54,8 @@ public class StudentController implements Serializable, MyConstants {
     @Inject
     protected LoginBean loginBean;
 
-    protected List<Student> listOfStudents;
-    protected List<String> listOfPrograms;
+    protected List<Student> listOfStudents = new ArrayList<>();
+    protected List<String> listOfPrograms = new ArrayList<>();
     protected boolean adding;
     protected ResourceBundle bundle;
     
@@ -65,7 +66,6 @@ public class StudentController implements Serializable, MyConstants {
 
     public StudentController() {
     	super();
-        //bundle = ResourceBundle.getBundle(BUNDLE_BASENAME, facesContext.getViewRoot().getLocale());
     }
     
     @PostConstruct
@@ -84,7 +84,6 @@ public class StudentController implements Serializable, MyConstants {
         
         webTarget = client.target(uri);
         
-        loadStudents();
     }
 
     public List<Student> getStudents() {
@@ -96,12 +95,30 @@ public class StudentController implements Serializable, MyConstants {
     }
     
     public void loadStudents() {
-    	Response response = webTarget
-                .register(auth)
-                .path(STUDENT_RESOURCE_NAME)
-                .request()
-                .get();
-        listOfStudents = response.readEntity(new GenericType<List<Student>>(){});
+    	try {
+            Response response = webTarget
+                    .register(auth)
+                    .path(STUDENT_RESOURCE_NAME)
+                    .request()
+                    .get();
+            
+            if (response.getStatus() == 200) {
+                listOfStudents = response.readEntity(new GenericType<List<Student>>(){});
+                if (listOfStudents == null) {
+                    listOfStudents = new ArrayList<>();
+                }
+            } else {
+                listOfStudents = new ArrayList<>();
+                facesContext.addMessage(null, 
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                    "Failed to load students. Status: " + response.getStatus(), null));
+            }
+        } catch (Exception e) {
+            listOfStudents = new ArrayList<>();
+            facesContext.addMessage(null, 
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                "Error loading students: " + e.getMessage(), null));
+        }
     }
 
     public boolean isAdding() {
@@ -183,12 +200,24 @@ public class StudentController implements Serializable, MyConstants {
     }
     
 	public List<String> getPrograms() {
-    	Response response = webTarget
-                .register(auth)
-                .path(STUDENT_RESOURCE_NAME + PROGRAM_RESOURCE_PATH)
-                .request()
-                .get();
-        listOfPrograms = response.readEntity(new GenericType<List<String>>(){});
+    	try {
+            Response response = webTarget
+                    .register(auth)
+                    .path(STUDENT_RESOURCE_NAME + PROGRAM_RESOURCE_PATH)
+                    .request()
+                    .get();
+            
+            if (response.getStatus() == 200) {
+                listOfPrograms = response.readEntity(new GenericType<List<String>>(){});
+                if (listOfPrograms == null) {
+                    listOfPrograms = new ArrayList<>();
+                }
+            } else {
+                listOfPrograms = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            listOfPrograms = new ArrayList<>();
+        }
         return listOfPrograms;
 	}
 	

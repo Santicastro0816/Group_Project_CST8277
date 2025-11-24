@@ -262,13 +262,16 @@ public class ACMECollegeService implements Serializable {
 
 	@Transactional
 	public StudentClub updateStudentClubById(int id, StudentClub studentClubWithUpdates) {
-		StudentClub studentClubToBeUpdated = getStudentClubById(id);
-		if (studentClubToBeUpdated != null) {
-			em.refresh(studentClubToBeUpdated);
-			em.merge(studentClubWithUpdates);
-			em.flush();
-		}
-		return studentClubWithUpdates;
+	    StudentClub studentClubToBeUpdated = getStudentClubById(id);
+	    if (studentClubToBeUpdated != null) {
+	        // Update the fields of the managed entity instead of merging
+	        studentClubToBeUpdated.setName(studentClubWithUpdates.getName());
+	        studentClubToBeUpdated.setDesc(studentClubWithUpdates.getDesc());
+	        studentClubToBeUpdated.setAcademic(studentClubWithUpdates.getAcademic());
+	        em.flush();
+	        return studentClubToBeUpdated;
+	    }
+	    return null;
 	}
 
 	@Transactional

@@ -108,7 +108,7 @@ public class Student extends PojoBase implements Serializable {
     // Hint - If the JoinTable annotation is missing, the default values of the annotation elements apply.  The name of the join table is assumed to be the table names of the associated primary tables concatenated together (owning side first) using an underscore.
     @JoinTable(name="club_membership",
     joinColumns=@JoinColumn(name="student_id", referencedColumnName="id"),
-    inverseJoinColumns=@JoinColumn(name="club_id", referencedColumnName="club_id"))
+    inverseJoinColumns=@JoinColumn(name="club_id", referencedColumnName = "club_id"))
 	// Hint - @JsonIgnore is used to mark a field or method within a Java class that should be ignored during JSON serialization and deserialization processes.
     @JsonIgnore
     protected Set<StudentClub> studentClubs = new HashSet<StudentClub>();

@@ -50,11 +50,11 @@ public class CourseRegistration extends PojoBaseCompositeKey<CourseRegistrationP
 
 	@MapsId("courseId")
 	@ManyToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "course_id", referencedColumnName = "id", nullable = false)
+	@JoinColumn(name = "course_id", referencedColumnName = "course_id", nullable = false)
 	protected Course course;
 
 	@ManyToOne(cascade = CascadeType.MERGE, optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name = "professor_id", referencedColumnName = "id", nullable = true)
+	@JoinColumn(name = "professor_id", referencedColumnName = "professor_id", nullable = true)
 	protected Professor professor;
 
 	@Basic(optional = false)

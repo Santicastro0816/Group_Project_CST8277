@@ -33,8 +33,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "course")
 @Access(AccessType.FIELD)
+@AttributeOverride(name = "id", column = @Column(name = "course_id"))
 @NamedQuery(name = Course.ALL_COURSES_QUERY, query = "SELECT c FROM Course c")
 public class Course extends PojoBase implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 	
 	public static final String ALL_COURSES_QUERY = "Course.findAll";

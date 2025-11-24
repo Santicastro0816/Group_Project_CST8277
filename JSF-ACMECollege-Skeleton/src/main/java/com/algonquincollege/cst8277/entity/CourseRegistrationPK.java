@@ -19,8 +19,7 @@ import jakarta.persistence.Embeddable;
 /**
  * The primary key class for the course_registration database table.
  */
-//TODO CRPK01 - What annotation is used to define an object which can be embedded in other entities?
-//Hint - @Access is used to establish where the annotation for JPA will be placed, field or properties. 
+@Embeddable
 @Access(AccessType.FIELD)
 public class CourseRegistrationPK implements Serializable {
 	// Default serial version id, required for serializable classes.
