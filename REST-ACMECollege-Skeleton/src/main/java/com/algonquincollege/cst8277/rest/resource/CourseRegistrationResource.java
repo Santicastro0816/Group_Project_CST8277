@@ -8,9 +8,13 @@ import java.util.List;
 
 import com.algonquincollege.cst8277.ejb.ACMECollegeService;
 import com.algonquincollege.cst8277.entity.CourseRegistration;
+import com.algonquincollege.cst8277.entity.SecurityUser;
+import com.algonquincollege.cst8277.entity.Student;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.security.enterprise.SecurityContext;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -25,6 +29,7 @@ import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.glassfish.soteria.WrappingCallerPrincipal;
 
 @Path(COURSE_REGISTRATION_RESOURCE_NAME)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -36,12 +41,30 @@ public class CourseRegistrationResource {
     @EJB
     protected ACMECollegeService service;
 
+    @Inject
+    protected SecurityContext sc;
+
     // GET /courseregistration
     @GET
     @RolesAllowed({ADMIN_ROLE, USER_ROLE})
     public Response getAllRegistrations() {
         LOG.debug("retrieving all course registrations ...");
-        List<CourseRegistration> regs = service.getAllCourseRegistrations();
+        List<CourseRegistration> regs;
+        if (sc.isCallerInRole(ADMIN_ROLE)) {
+            regs = service.getAllCourseRegistrations();
+        } else if (sc.isCallerInRole(USER_ROLE)) {
+            // USER_ROLE can only see their own course registrations
+            WrappingCallerPrincipal wCallerPrincipal = (WrappingCallerPrincipal) sc.getCallerPrincipal();
+            SecurityUser sUser = (SecurityUser) wCallerPrincipal.getWrapped();
+            Student student = sUser.getStudent();
+            if (student != null) {
+                regs = service.getCourseRegistrationsByStudentId(student.getId());
+            } else {
+                regs = List.of(); // Empty list if no student linked
+            }
+        } else {
+            regs = List.of();
+        }
         return Response.ok(regs).build();
     }
 
@@ -55,6 +78,15 @@ public class CourseRegistrationResource {
         CourseRegistration reg = service.getCourseRegistrationById(studentId, courseId);
         if (reg == null) {
             return Response.status(Status.NOT_FOUND).build();
+        }
+        // Check if USER_ROLE is trying to access someone else's registration
+        if (sc.isCallerInRole(USER_ROLE) && !sc.isCallerInRole(ADMIN_ROLE)) {
+            WrappingCallerPrincipal wCallerPrincipal = (WrappingCallerPrincipal) sc.getCallerPrincipal();
+            SecurityUser sUser = (SecurityUser) wCallerPrincipal.getWrapped();
+            Student student = sUser.getStudent();
+            if (student == null || student.getId() != studentId) {
+                return Response.status(Status.FORBIDDEN).build();
+            }
         }
         return Response.ok(reg).build();
     }

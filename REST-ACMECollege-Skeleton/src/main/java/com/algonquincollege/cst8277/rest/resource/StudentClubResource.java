@@ -89,4 +89,17 @@ public class StudentClubResource {
         }
         return Response.ok(deletedStudentClub).build();
     }
+
+    @POST
+    @RolesAllowed({ADMIN_ROLE})
+    @Path(RESOURCE_PATH_ID_PATH + "/members/{studentId}")
+    public Response addStudentToClub(@PathParam(RESOURCE_PATH_ID_ELEMENT) int clubId,
+                                      @PathParam("studentId") int studentId) {
+        LOG.debug("Adding student {} to club {}", studentId, clubId);
+        StudentClub updatedClub = service.addStudentToClub(clubId, studentId);
+        if (updatedClub == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        return Response.ok(updatedClub).build();
+    }
 }
