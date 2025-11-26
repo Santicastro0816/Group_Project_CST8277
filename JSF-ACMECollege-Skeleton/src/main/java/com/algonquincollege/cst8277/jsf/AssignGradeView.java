@@ -70,9 +70,10 @@ public class AssignGradeView implements Serializable {
         clear();
     }
 
-    public void clear() {
+    public String clear() {
         this.studentId = null;
         this.courseId = null;
         this.letterGrade = null;
+        return null; // Stay on same page
     }
 }

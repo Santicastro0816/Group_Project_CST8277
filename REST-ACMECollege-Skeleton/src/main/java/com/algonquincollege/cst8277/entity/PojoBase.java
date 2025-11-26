@@ -38,10 +38,10 @@ public abstract class PojoBase implements Serializable {
 	@Version
 	protected int version = 1;
 
-	@Column(name = "created", insertable = false, updatable = false)
+	@Column(name = "created", insertable = true, updatable = false)
 	protected LocalDateTime created;
 
-	@Column(name = "updated", insertable = false, updatable = false)
+	@Column(name = "updated", insertable = true, updatable = true)
 	protected LocalDateTime updated;
 
 	public int getId() {

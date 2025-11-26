@@ -268,6 +268,7 @@ public class ACMECollegeService implements Serializable {
 	        studentClubToBeUpdated.setName(studentClubWithUpdates.getName());
 	        studentClubToBeUpdated.setDesc(studentClubWithUpdates.getDesc());
 	        studentClubToBeUpdated.setAcademic(studentClubWithUpdates.getAcademic());
+	        // Version will be incremented automatically by JPA on flush
 	        em.flush();
 	        return studentClubToBeUpdated;
 	    }
@@ -284,9 +285,27 @@ public class ACMECollegeService implements Serializable {
 		return studentClub;
 	}
 
+	@Transactional
+	public StudentClub addStudentToClub(int clubId, int studentId) {
+		StudentClub club = getStudentClubById(clubId);
+		Student student = getStudentById(studentId);
+		if (club != null && student != null) {
+			club.getStudentMembers().add(student);
+			em.flush();
+			return club;
+		}
+		return null;
+	}
+
 	// CRUD methods for CourseRegistration
 	public List<CourseRegistration> getAllCourseRegistrations() {
 		TypedQuery<CourseRegistration> query = em.createNamedQuery(QUERY_ALL_COURSE_REGISTRATIONS, CourseRegistration.class);
+		return query.getResultList();
+	}
+
+	public List<CourseRegistration> getCourseRegistrationsByStudentId(int studentId) {
+		TypedQuery<CourseRegistration> query = em.createNamedQuery(CourseRegistration.QUERY_COURSE_REGISTRATIONS_BY_STUDENT_ID, CourseRegistration.class);
+		query.setParameter(PARAM1, studentId);
 		return query.getResultList();
 	}
 

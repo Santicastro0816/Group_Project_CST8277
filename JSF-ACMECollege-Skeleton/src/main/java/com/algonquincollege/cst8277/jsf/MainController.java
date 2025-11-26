@@ -83,6 +83,12 @@ public class MainController implements Serializable, MyConstants {
     		case STUDENT_CLUB_MANAGEMENT: 
     			studentClubController.loadStudentClubs();
     			break;
+    		case COURSE_REGISTRATION:
+    		case ASSIGN_PROFESSOR:
+    		case ASSIGN_GRADE:
+    		case CLUB_MEMBERSHIP_REGISTRATION:
+    			// These views don't need to load data on entry
+    			break;
     	}
     }
     

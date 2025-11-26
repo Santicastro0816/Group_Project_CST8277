@@ -766,7 +766,7 @@
                 </h:column>
                 <h:column>
                   <f:facet name="header">Academic</f:facet>
-                  <h:outputText value="#{studentClub.academic ? 'Yes' : 'No'}" rendered="#{not studentClub.editable}" />
+                  <h:outputText value="#{studentClub.academic ? 'true' : 'false'}" rendered="#{not studentClub.editable}" />
                   <h:selectOneMenu id="academic_editable"
                     value="#{studentClub.academic}" rendered="#{studentClub.editable}">
                     <f:selectItem itemValue="false" itemLabel="Non-Academic" />
