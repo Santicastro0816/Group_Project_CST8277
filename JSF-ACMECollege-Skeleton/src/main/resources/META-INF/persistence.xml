@@ -48,7 +48,7 @@
             <property name="jakarta.persistence.schema-generation.create-script-source" value="sql/acmecollege-create.sql"/>
             <property name="jakarta.persistence.schema-generation.drop-source" value="script"/>
             <property name="jakarta.persistence.schema-generation.drop-script-source" value="sql/acmecollege-drop.sql"/>
-            <property name="jakarta.persistence.sql-load-script-source" value="sql/acmecollege-populate.sql"/>
+            <property name="jakarta.persistence.sql-load-script-source" value="sql/acmecollege-data.sql"/>
             <!-- Hibernate specific props 
                https://docs.jboss.org/hibernate/stable/orm/userguide/html_single/Hibernate_User_Guide.html#configurations -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>

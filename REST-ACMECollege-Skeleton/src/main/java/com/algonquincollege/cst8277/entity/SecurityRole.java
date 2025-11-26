@@ -12,9 +12,13 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,13 +41,14 @@ public class SecurityRole implements Serializable {
     
 	public static final String SECURITY_ROLE_BY_NAME = "SecurityRole.RoleByName";
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "role_id")
+	protected int id;
     
-    @Basic(optional = false)
-    @Column(name = "role_name", nullable = false, unique = true, length = 50)
-    protected String roleName;
+	@Basic
+	@Column(name = "name", nullable = false, length = 45)
+	protected String roleName;
     
     @ManyToMany(mappedBy = "roles", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     protected Set<SecurityUser> users = new HashSet<SecurityUser>();
@@ -84,9 +89,6 @@ public class SecurityRole implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        // Only include member variables that really contribute to an object's identity
-        // i.e. if variables like version/updated/name/etc. change throughout an object's lifecycle,
-        // they shouldn't be part of the hashCode calculation
         return prime * result + Objects.hash(getId());
     }
 
@@ -99,8 +101,6 @@ public class SecurityRole implements Serializable {
             return false;
         }
         if (obj instanceof SecurityRole otherSecurityRole) {
-            // See comment (above) in hashCode():  Compare using only member variables that are
-            // truly part of an object's identity
             return Objects.equals(this.getId(), otherSecurityRole.getId());
         }
         return false;

@@ -115,6 +115,9 @@ public class NewStudentView implements Serializable {
         theNewStudent.setProgram(getProgram());
         studentController.addNewStudent(theNewStudent);
         
+        // Reload the student list to show the new student
+        studentController.loadStudents();
+        
         //clean up
 		studentController.toggleAdding();
         setFirstName(null);
