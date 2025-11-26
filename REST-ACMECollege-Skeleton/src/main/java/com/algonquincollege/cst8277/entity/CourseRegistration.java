@@ -32,13 +32,11 @@ import jakarta.persistence.Table;
 @Access(AccessType.FIELD)
 @NamedQuery(name = CourseRegistration.ALL_COURSE_REGISTRATIONS_QUERY_NAME, query = "SELECT cr FROM CourseRegistration cr")
 @NamedQuery(name = CourseRegistration.QUERY_SPECIFIC_COURSE_REGISTRATION, query = "SELECT cr FROM CourseRegistration cr WHERE cr.student.id = :param1 AND cr.course.id = :param2")
-@NamedQuery(name = CourseRegistration.QUERY_COURSE_REGISTRATIONS_BY_STUDENT_ID, query = "SELECT cr FROM CourseRegistration cr WHERE cr.student.id = :param1")
 public class CourseRegistration extends PojoBaseCompositeKey<CourseRegistrationPK> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String ALL_COURSE_REGISTRATIONS_QUERY_NAME = "CourseRegistration.findAll";
     public static final String QUERY_SPECIFIC_COURSE_REGISTRATION = "CourseRegistration.findSpecificCourseRegistration";
-    public static final String QUERY_COURSE_REGISTRATIONS_BY_STUDENT_ID = "CourseRegistration.findByStudentId";
 
     // Hint - What annotation is used for a composite primary key type?
 	@EmbeddedId

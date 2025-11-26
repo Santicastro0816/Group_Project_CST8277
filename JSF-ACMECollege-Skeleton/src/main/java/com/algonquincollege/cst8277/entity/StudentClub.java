@@ -16,21 +16,35 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.algonquincollege.cst8277.entity.Academic;
+import com.algonquincollege.cst8277.entity.NonAcademic;
 
 @SuppressWarnings("unused")
 
 @Entity
 @Table(name = "student_club")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "academic", discriminatorType = DiscriminatorType.INTEGER)
 @Access(AccessType.FIELD)
 @AttributeOverride(name = "id", column = @Column(name = "club_id"))
 @NamedQuery(name = StudentClub.ALL_STUDENT_CLUBS_QUERY, query = "SELECT sc FROM StudentClub sc")
@@ -47,11 +61,6 @@ public class StudentClub extends PojoBase implements Serializable {
 	@Column(name = "description", nullable = true, length = 500)
 	protected String desc;
 
-	@Basic(optional = false)
-	@Column(name = "academic", columnDefinition = "BIT(1)")
-	protected boolean academic;
-
-	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	@JoinTable(name = "club_membership",
 	    joinColumns = @JoinColumn(name = "club_id", referencedColumnName = "club_id"),
@@ -64,6 +73,10 @@ public class StudentClub extends PojoBase implements Serializable {
 	public StudentClub() {
 		super();
 	}
+
+    public StudentClub(boolean isAcademic) {
+        this();
+    }
 
 	public String getName() {
 		return name;
@@ -82,11 +95,10 @@ public class StudentClub extends PojoBase implements Serializable {
 	}
 	
 	public boolean getAcademic() {
-		return academic;
+		return this instanceof Academic;
 	}
 
-	public void setAcademic(boolean academic) {
-		this.academic = academic;
+	public void setAcademic(boolean isAcademic) {
 	}
 
 	public Set<Student> getStudentMembers() {
@@ -109,7 +121,7 @@ public class StudentClub extends PojoBase implements Serializable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("StudentClub[id = ").append(id).append(", name = ").append(name).append(", desc = ")
-				.append(desc).append(", isAcademic = ").append(academic)
+				.append(desc).append(", isAcademic = ").append(this instanceof Academic)
 				.append(", created = ").append(created).append(", updated = ").append(updated).append(", version = ").append(version).append("]");
 		return builder.toString();
 	}

@@ -33,10 +33,10 @@ public abstract class PojoBaseCompositeKey<ID extends Serializable> implements S
 	@Version
 	protected int version;
 
-	@Column(name = "created", insertable = true, updatable = false)
+	@Column(name = "created", insertable = false, updatable = false)
 	protected LocalDateTime created;
 
-	@Column(name = "updated", insertable = true, updatable = true)
+	@Column(name = "updated", insertable = false, updatable = false)
 	protected LocalDateTime updated;
 
 	public abstract ID getId();

@@ -87,11 +87,10 @@ public class CourseRegistrationView implements Serializable {
         clear();
     }
 
-    public String clear() {
+    public void clear() {
         this.studentId = null;
         this.courseId = null;
         this.year = null;
         this.semester = null;
-        return null; // Stay on same page
     }
 }
