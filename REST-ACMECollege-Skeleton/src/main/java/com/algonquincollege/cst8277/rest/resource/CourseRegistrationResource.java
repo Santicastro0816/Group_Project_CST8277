@@ -133,4 +133,14 @@ public class CourseRegistrationResource {
         }
         return Response.ok(deleted).build();
     }
+    
+ // GET /courseregistration/lettergrade
+    @GET
+    @RolesAllowed({ADMIN_ROLE, USER_ROLE})
+    @Path("/lettergrade")
+    public Response getAllLetterGrades() {
+        LOG.debug("retrieving all letter grades ...");
+        List<String> letterGrades = service.getAllLetterGrades();
+        return Response.ok(letterGrades).build();
+    }
 }

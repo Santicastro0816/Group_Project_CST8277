@@ -68,6 +68,7 @@ public class ACMECollegeService implements Serializable {
     private static final Logger LOG = LogManager.getLogger();
     
     private static final String READ_ALL_PROGRAMS = "SELECT name FROM program";
+    private static final String READ_ALL_LETTER_GRADES = "SELECT grade FROM letter_grade"; 
     
     // Query constants
     public static final String QUERY_ALL_COURSES = "Course.findAll";
@@ -168,6 +169,16 @@ public class ACMECollegeService implements Serializable {
 		catch (Exception e) {
 		}
 		return programs;
+    }
+	@SuppressWarnings("unchecked")
+    public List<String> getAllLetterGrades() {
+		List<String> letterGrades = new ArrayList<>();
+		try {
+			letterGrades = (List<String>) em.createNativeQuery(READ_ALL_LETTER_GRADES).getResultList();
+		}
+		catch (Exception e) {
+		}
+		return letterGrades;
     }
 
 	// CRUD methods for Course
