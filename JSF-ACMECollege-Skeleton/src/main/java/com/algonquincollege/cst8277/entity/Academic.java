@@ -18,6 +18,6 @@ public class Academic extends StudentClub implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public Academic() {
-		super(true);
+		super();
 	}
 }

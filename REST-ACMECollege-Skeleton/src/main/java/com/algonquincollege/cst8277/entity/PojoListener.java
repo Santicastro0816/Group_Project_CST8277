@@ -20,6 +20,7 @@ public class PojoListener {
 	public void setCreatedOnDate(PojoBase pojoBase) {
 		LocalDateTime now = LocalDateTime.now();
 		pojoBase.setCreated(now);
+		pojoBase.setUpdated(now);
 	}
 
 	@PreUpdate

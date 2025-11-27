@@ -20,6 +20,7 @@ public class PojoCompositeListener {
 	public void setCreatedOnDate(PojoBaseCompositeKey<?> pojoBaseComposite) {
 		LocalDateTime now = LocalDateTime.now();
 		pojoBaseComposite.setCreated(now);
+		pojoBaseComposite.setUpdated(now);
 	}
 
 	@PreUpdate
