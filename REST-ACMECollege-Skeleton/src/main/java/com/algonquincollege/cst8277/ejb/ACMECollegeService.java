@@ -70,10 +70,7 @@ public class ACMECollegeService implements Serializable {
     private static final Logger LOG = LogManager.getLogger();
     
     private static final String READ_ALL_PROGRAMS = "SELECT name FROM program";
-<<<<<<< Updated upstream
-=======
     private static final String READ_ALL_LETTER_GRADES = "SELECT grade FROM letter_grade";
->>>>>>> Stashed changes
     
     // Query constants
     public static final String QUERY_ALL_COURSES = "Course.findAll";
@@ -175,8 +172,6 @@ public class ACMECollegeService implements Serializable {
 		}
 		return programs;
     }
-<<<<<<< Updated upstream
-=======
 
 	@SuppressWarnings("unchecked")
     public List<String> getAllLetterGrades() {
@@ -188,7 +183,6 @@ public class ACMECollegeService implements Serializable {
 		}
 		return letterGrades;
     }
->>>>>>> Stashed changes
 
 	// CRUD methods for Course
 	public List<Course> getAllCourses() {
@@ -282,13 +276,17 @@ public class ACMECollegeService implements Serializable {
 
 	@Transactional
 	public StudentClub updateStudentClubById(int id, StudentClub studentClubWithUpdates) {
-		StudentClub studentClubToBeUpdated = getStudentClubById(id);
-		if (studentClubToBeUpdated != null) {
-			em.refresh(studentClubToBeUpdated);
-			em.merge(studentClubWithUpdates);
-			em.flush();
-		}
-		return studentClubWithUpdates;
+	    StudentClub studentClubToBeUpdated = getStudentClubById(id);
+	    if (studentClubToBeUpdated != null) {
+	        // Update the fields of the managed entity instead of merging
+	        studentClubToBeUpdated.setName(studentClubWithUpdates.getName());
+	        studentClubToBeUpdated.setDesc(studentClubWithUpdates.getDesc());
+	        studentClubToBeUpdated.setAcademic(studentClubWithUpdates.getAcademic());
+	        // Version will be incremented automatically by JPA on flush
+	        em.flush();
+	        return studentClubToBeUpdated;
+	    }
+	    return null;
 	}
 
 	@Transactional
@@ -301,9 +299,27 @@ public class ACMECollegeService implements Serializable {
 		return studentClub;
 	}
 
+	@Transactional
+	public StudentClub addStudentToClub(int clubId, int studentId) {
+		StudentClub club = getStudentClubById(clubId);
+		Student student = getStudentById(studentId);
+		if (club != null && student != null) {
+			club.getStudentMembers().add(student);
+			em.flush();
+			return club;
+		}
+		return null;
+	}
+
 	// CRUD methods for CourseRegistration
 	public List<CourseRegistration> getAllCourseRegistrations() {
 		TypedQuery<CourseRegistration> query = em.createNamedQuery(QUERY_ALL_COURSE_REGISTRATIONS, CourseRegistration.class);
+		return query.getResultList();
+	}
+
+	public List<CourseRegistration> getCourseRegistrationsByStudentId(int studentId) {
+		TypedQuery<CourseRegistration> query = em.createNamedQuery(CourseRegistration.QUERY_COURSE_REGISTRATIONS_BY_STUDENT_ID, CourseRegistration.class);
+		query.setParameter(PARAM1, studentId);
 		return query.getResultList();
 	}
 
