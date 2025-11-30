@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< Updated upstream
 <pageflow:Pageflow xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf17640029481860" configfile="/REST-ACMECollege-Skeleton/src/main/webapp/WEB-INF/faces-config.xml"/>
+=======
+<pageflow:Pageflow xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf17645409719150" configfile="/REST-ACMECollege-Skeleton/src/main/webapp/WEB-INF/faces-config.xml"/>
+>>>>>>> Stashed changes
