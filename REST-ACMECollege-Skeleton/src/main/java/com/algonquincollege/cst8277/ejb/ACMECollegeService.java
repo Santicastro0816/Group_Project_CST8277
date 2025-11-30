@@ -44,6 +44,8 @@ import jakarta.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 
+import org.hibernate.Hibernate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,7 +70,7 @@ public class ACMECollegeService implements Serializable {
     private static final Logger LOG = LogManager.getLogger();
     
     private static final String READ_ALL_PROGRAMS = "SELECT name FROM program";
-    private static final String READ_ALL_LETTER_GRADES = "SELECT grade FROM letter_grade"; 
+    private static final String READ_ALL_LETTER_GRADES = "SELECT grade FROM letter_grade";
     
     // Query constants
     public static final String QUERY_ALL_COURSES = "Course.findAll";
@@ -170,6 +172,7 @@ public class ACMECollegeService implements Serializable {
 		}
 		return programs;
     }
+
 	@SuppressWarnings("unchecked")
     public List<String> getAllLetterGrades() {
 		List<String> letterGrades = new ArrayList<>();
@@ -327,6 +330,32 @@ public class ACMECollegeService implements Serializable {
 
 	@Transactional
 	public CourseRegistration persistCourseRegistration(CourseRegistration newCourseRegistration) {
+		// Load existing Student and Course entities to avoid detached entity exception
+		if (newCourseRegistration.getStudent() != null && newCourseRegistration.getStudent().getId() > 0) {
+			Student existingStudent = getStudentById(newCourseRegistration.getStudent().getId());
+			if (existingStudent == null) {
+				throw new IllegalArgumentException("Student with id " + newCourseRegistration.getStudent().getId() + " not found");
+			}
+			newCourseRegistration.setStudent(existingStudent);
+		}
+		
+		if (newCourseRegistration.getCourse() != null && newCourseRegistration.getCourse().getId() > 0) {
+			Course existingCourse = getCourseById(newCourseRegistration.getCourse().getId());
+			if (existingCourse == null) {
+				throw new IllegalArgumentException("Course with id " + newCourseRegistration.getCourse().getId() + " not found");
+			}
+			newCourseRegistration.setCourse(existingCourse);
+		}
+		
+		// Handle professor if provided
+		if (newCourseRegistration.getProfessor() != null && newCourseRegistration.getProfessor().getId() > 0) {
+			Professor existingProfessor = getProfessorById(newCourseRegistration.getProfessor().getId());
+			if (existingProfessor == null) {
+				throw new IllegalArgumentException("Professor with id " + newCourseRegistration.getProfessor().getId() + " not found");
+			}
+			newCourseRegistration.setProfessor(existingProfessor);
+		}
+		
 		em.persist(newCourseRegistration);
 		return newCourseRegistration;
 	}
@@ -345,6 +374,57 @@ public class ACMECollegeService implements Serializable {
 			em.refresh(courseRegistration);
 			em.remove(courseRegistration);
 		}
+		return courseRegistration;
+	}
+
+	@Transactional
+	public CourseRegistration assignProfessorToCourseRegistration(int studentId, int courseId, Professor professor) {
+		CourseRegistration courseRegistration = getCourseRegistrationById(studentId, courseId);
+		if (courseRegistration == null) {
+			return null;
+		}
+		// Load the professor entity if provided
+		if (professor != null && professor.getId() > 0) {
+			Professor existingProfessor = getProfessorById(professor.getId());
+			if (existingProfessor == null) {
+				throw new IllegalArgumentException("Professor with id " + professor.getId() + " not found");
+			}
+			courseRegistration.setProfessor(existingProfessor);
+		} else {
+			courseRegistration.setProfessor(null);
+		}
+		// Initialize lazy-loaded relationships before returning (to avoid LazyInitializationException during JSON serialization)
+		if (courseRegistration.getStudent() != null) {
+			Hibernate.initialize(courseRegistration.getStudent());
+		}
+		if (courseRegistration.getCourse() != null) {
+			Hibernate.initialize(courseRegistration.getCourse());
+		}
+		if (courseRegistration.getProfessor() != null) {
+			Hibernate.initialize(courseRegistration.getProfessor());
+		}
+		em.flush();
+		return courseRegistration;
+	}
+
+	@Transactional
+	public CourseRegistration assignGradeToCourseRegistration(int studentId, int courseId, String letterGrade) {
+		CourseRegistration courseRegistration = getCourseRegistrationById(studentId, courseId);
+		if (courseRegistration == null) {
+			return null;
+		}
+		courseRegistration.setLetterGrade(letterGrade);
+		// Initialize lazy-loaded relationships before returning (to avoid LazyInitializationException during JSON serialization)
+		if (courseRegistration.getStudent() != null) {
+			Hibernate.initialize(courseRegistration.getStudent());
+		}
+		if (courseRegistration.getCourse() != null) {
+			Hibernate.initialize(courseRegistration.getCourse());
+		}
+		if (courseRegistration.getProfessor() != null) {
+			Hibernate.initialize(courseRegistration.getProfessor());
+		}
+		em.flush();
 		return courseRegistration;
 	}
 	

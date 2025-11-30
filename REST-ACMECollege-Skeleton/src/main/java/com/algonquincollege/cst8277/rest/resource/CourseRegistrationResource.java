@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.algonquincollege.cst8277.ejb.ACMECollegeService;
 import com.algonquincollege.cst8277.entity.CourseRegistration;
+import com.algonquincollege.cst8277.entity.Professor;
 import com.algonquincollege.cst8277.entity.SecurityUser;
 import com.algonquincollege.cst8277.entity.Student;
 
@@ -32,7 +33,6 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.soteria.WrappingCallerPrincipal;
 
 @Path(COURSE_REGISTRATION_RESOURCE_NAME)
-@Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class CourseRegistrationResource {
 
@@ -94,6 +94,7 @@ public class CourseRegistrationResource {
     // POST /courseregistration
     @POST
     @RolesAllowed({ADMIN_ROLE})
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response createRegistration(CourseRegistration newReg) {
         LOG.debug("creating new course registration");
         CourseRegistration created = service.persistCourseRegistration(newReg);
@@ -104,6 +105,7 @@ public class CourseRegistrationResource {
     @PUT
     @RolesAllowed({ADMIN_ROLE})
     @Path("/{studentId}/{courseId}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response updateRegistration(@PathParam("studentId") int studentId,
                                        @PathParam("courseId") int courseId,
                                        CourseRegistration regWithUpdates) {
@@ -133,8 +135,8 @@ public class CourseRegistrationResource {
         }
         return Response.ok(deleted).build();
     }
-    
- // GET /courseregistration/lettergrade
+
+    // GET /courseregistration/lettergrade
     @GET
     @RolesAllowed({ADMIN_ROLE, USER_ROLE})
     @Path("/lettergrade")
@@ -142,5 +144,37 @@ public class CourseRegistrationResource {
         LOG.debug("retrieving all letter grades ...");
         List<String> letterGrades = service.getAllLetterGrades();
         return Response.ok(letterGrades).build();
+    }
+
+    // PUT /courseregistration/student/{studentId}/course/{courseId} - Assign professor (JSON body)
+    @PUT
+    @RolesAllowed({ADMIN_ROLE})
+    @Path("/student/{studentId}/course/{courseId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response assignProfessor(@PathParam("studentId") int studentId,
+                                     @PathParam("courseId") int courseId,
+                                     Professor professor) {
+        LOG.debug("assigning professor to registration for student {} course {}", studentId, courseId);
+        CourseRegistration updated = service.assignProfessorToCourseRegistration(studentId, courseId, professor);
+        if (updated == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        return Response.ok(updated).build();
+    }
+
+    // PUT /courseregistration/student/{studentId}/course/{courseId} - Assign grade (plain text body)
+    @PUT
+    @RolesAllowed({ADMIN_ROLE})
+    @Path("/student/{studentId}/course/{courseId}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response assignGrade(@PathParam("studentId") int studentId,
+                                @PathParam("courseId") int courseId,
+                                String letterGrade) {
+        LOG.debug("assigning grade {} to registration for student {} course {}", letterGrade, studentId, courseId);
+        CourseRegistration updated = service.assignGradeToCourseRegistration(studentId, courseId, letterGrade);
+        if (updated == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        return Response.ok(updated).build();
     }
 }
