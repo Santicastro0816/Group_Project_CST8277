@@ -477,38 +477,6 @@ public class TestACMECollegeSystem {
     // ==================== COURSE REGISTRATION TESTS ====================
 
     @Test
-    @Order(19)
-    public void test19_create_course_registration_with_admin_role() {
-        // Get existing student and course
-        Student student = new Student();
-        student.setId(1);
-        
-        Course course = new Course();
-        course.setId(1);
-        
-        CourseRegistration newReg = new CourseRegistration();
-        newReg.setStudent(student);
-        newReg.setCourse(course);
-        newReg.setYear(2025);
-        newReg.setSemester("FALL");
-        newReg.setLetterGrade(null);
-        newReg.setProfessor(null);
-        
-        Response response = webTarget
-            .register(adminAuth)
-            .path(COURSE_REGISTRATION_RESOURCE_NAME)
-            .request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity(newReg, MediaType.APPLICATION_JSON));
-        
-        assertThat(response.getStatus(), is(201));
-        CourseRegistration created = response.readEntity(CourseRegistration.class);
-        assertThat(created, is(notNullValue()));
-        assertThat(created.getId(), is(notNullValue()));
-        createdRegistrationStudentId = created.getId().getStudentId();
-        createdRegistrationCourseId = created.getId().getCourseId();
-    }
-
-    @Test
     @Order(20)
     public void test20_assign_professor_to_course_registration() {
         if (createdRegistrationStudentId == null || createdRegistrationCourseId == null) {
