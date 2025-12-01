@@ -55,18 +55,7 @@ public class AssignGradeView implements Serializable {
             return;
         }
 
-        CourseRegistration registration =
-                courseRegistrationController.findCourseRegistration(studentId, courseId);
-
-        if (registration == null) {
-            facesContext.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "No course registration found for given student and course", null));
-            return;
-        }
-
-        registration.setLetterGrade(letterGrade);
-        courseRegistrationController.updateCourseRegistration(registration);
+        courseRegistrationController.assignGradeToCourseRegistration(studentId, courseId, letterGrade);
         clear();
     }
 

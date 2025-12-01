@@ -353,7 +353,7 @@
               </h:panelGroup>
             </h:panelGroup>
           </h:form>
-          <h:messages globalOnly="true" layout="table" styleClass="alert alert-danger"/>
+          <h:messages globalOnly="true" layout="table" infoClass="alert alert-success" errorClass="alert alert-danger" warnClass="alert alert-warning"/>
         </h:panelGroup>
 
         <!-- add your different panel groups here -->
@@ -525,7 +525,7 @@
               </h:panelGroup>
             </h:panelGroup>
           </h:form>
-          <h:messages globalOnly="true" layout="table" styleClass="alert alert-danger"/>
+          <h:messages globalOnly="true" layout="table" infoClass="alert alert-success" errorClass="alert alert-danger" warnClass="alert alert-warning"/>
         </h:panelGroup>
 		<!-- Professor Management Panel -->
         <h:panelGroup rendered="#{mainController.optionChosen == 'Professor Management'}">
@@ -673,7 +673,7 @@
               </h:panelGroup>
             </h:panelGroup>
           </h:form>
-          <h:messages globalOnly="true" layout="table" styleClass="alert alert-danger"/>
+          <h:messages globalOnly="true" layout="table" infoClass="alert alert-success" errorClass="alert alert-danger" warnClass="alert alert-warning"/>
         </h:panelGroup>
         <!-- Student Club Management Panel -->
         <h:panelGroup rendered="#{mainController.optionChosen == 'Student Club Management'}">
@@ -822,7 +822,7 @@
               </h:panelGroup>
             </h:panelGroup>
           </h:form>
-          <h:messages globalOnly="true" layout="table" styleClass="alert alert-danger"/>
+          <h:messages globalOnly="true" layout="table" infoClass="alert alert-success" errorClass="alert alert-danger" warnClass="alert alert-warning"/>
         </h:panelGroup>
         
                 <!-- Course Registration Panel -->
@@ -830,92 +830,122 @@
           <h:form id="courseRegistrationForm">
             <h:panelGroup rendered="#{externalContext.userPrincipal ne null and request.isUserInRole('ADMIN_ROLE')}">
 
-              <h:panelGrid columns="1" cellpadding="10">
+              <!-- Search/Select Field at Top -->
+              <h:panelGroup class="input-group" style="margin-bottom: 10px;">
+                <h:inputText id="cr_search"
+                             styleClass="form-control placeholder-darkgray"
+                             placeholder="Course Registration"
+                             value=""/>
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i class="fa fa-chevron-down"/>
+                  </span>
+                </div>
+              </h:panelGroup>
+              
+              <h:commandButton value="Submit" styleClass="btn btn-secondary" style="margin-bottom: 20px;"/>
 
-                <!-- Student Id -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="cr-student-addon">
-                      <i class="fa fa-user fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="cr_studentId"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="cr-student-addon"
-                               value="#{courseRegistrationView.studentId}"
-                               validatorMessage="Please enter a valid student id">
-                    <f:validateLongRange minimum="1" />
-                  </h:inputText>
+              <!-- Form Section with Icon and Label -->
+              <h:panelGroup style="margin-top: 20px; border-top: 2px solid #007bff; padding-top: 15px;">
+                <h:panelGroup style="margin-bottom: 15px;">
+                  <i class="fas fa-folder fa-fw" style="color: #007bff;"/>&#xa0;
+                  <h:outputText value="Add New Course Registration" style="color: #007bff; font-weight: bold;"/>
                 </h:panelGroup>
-                <h:message for="cr_studentId" style="color:red" />
 
-                <!-- Course Id -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="cr-course-addon">
-                      <i class="fas fa-book fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="cr_courseId"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="cr-course-addon"
-                               value="#{courseRegistrationView.courseId}"
-                               validatorMessage="Please enter a valid course id">
-                    <f:validateLongRange minimum="1" />
-                  </h:inputText>
-                </h:panelGroup>
-                <h:message for="cr_courseId" style="color:red" />
+                <h:panelGrid columns="1" cellpadding="10">
 
-                <!-- Year -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="cr-year-addon">
-                      <i class="fas fa-calendar-alt fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="cr_year"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="cr-year-addon"
-                               value="#{courseRegistrationView.year}"
-                               validatorMessage="Please enter a valid year">
-                    <f:validateLongRange minimum="2000" maximum="2100" />
-                  </h:inputText>
-                </h:panelGroup>
-                <h:message for="cr_year" style="color:red" />
+                  <!-- Student Id -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="cr-student-addon">
+                        <i class="fa fa-user fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="cr_studentId"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="cr-student-addon"
+                                 value="#{courseRegistrationView.studentId}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid student id">
+                      <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="cr_studentId" style="color:red" />
 
-                <!-- Semester -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="cr-semester-addon">
-                      <i class="fas fa-calendar fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="cr_semester"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="cr-semester-addon"
-                               value="#{courseRegistrationView.semester}"
-                               validatorMessage="Please enter a valid semester">
-                    <f:validateLength minimum="1" maximum="20" />
-                  </h:inputText>
-                </h:panelGroup>
-                <h:message for="cr_semester" style="color:red" />
+                  <!-- Course Id -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="cr-course-addon">
+                        <i class="fas fa-folder fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="cr_courseId"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="cr-course-addon"
+                                 value="#{courseRegistrationView.courseId}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid course id">
+                      <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="cr_courseId" style="color:red" />
 
-              </h:panelGrid>
+                  <!-- Year -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="cr-year-addon">
+                        <i class="fas fa-calendar-alt fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="cr_year"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="cr-year-addon"
+                                 value="#{courseRegistrationView.year}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid year">
+                      <f:validateLongRange minimum="2000" maximum="2100" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="cr_year" style="color:red" />
 
-              <h:panelGrid id="cr_actions" columns="2" cellpadding="10">
-                <h:commandLink action="#{courseRegistrationView.submit()}">
-                  <i class="fa fa-check fa-fw" />&#xa0;
-                  <h:outputText class="text-success" value="Submit" />
-                </h:commandLink>
-                <h:commandLink action="#{courseRegistrationView.clear()}" immediate="true">
-                  <i class="fa fa-undo fa-fw" />&#xa0;
-                  <h:outputText class="text-primary" value="Reset" />
-                </h:commandLink>
-              </h:panelGrid>
+                  <!-- Semester -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="cr-semester-addon">
+                        <i class="fas fa-tree fa-fw"/>
+                      </span>
+                    </div>
+                    <h:selectOneMenu id="cr_semester"
+                                     styleClass="form-control placeholder-darkgray"
+                                     aria-describedby="cr-semester-addon"
+                                     value="#{courseRegistrationView.semester}">
+                      <f:selectItem itemLabel="Semester" itemValue="" />
+                      <f:selectItem itemValue="FALL" itemLabel="FALL" />
+                      <f:selectItem itemValue="WINTER" itemLabel="WINTER" />
+                      <f:selectItem itemValue="SPRING" itemLabel="SPRING" />
+                    </h:selectOneMenu>
+                  </h:panelGroup>
+                  <h:message for="cr_semester" style="color:red" />
+
+                </h:panelGrid>
+
+                <h:panelGrid id="cr_actions" columns="2" cellpadding="10" style="margin-top: 15px;">
+                  <h:commandLink action="#{courseRegistrationView.submit()}" styleClass="btn btn-primary">
+                    <i class="fas fa-folder fa-fw" />&#xa0;
+                    <h:outputText class="text-success" value="Submit" />
+                  </h:commandLink>
+                  <h:commandLink action="#{courseRegistrationView.clear()}" immediate="true" styleClass="btn btn-success">
+                    <f:ajax execute="@this" render="@form" />
+                    <i class="fa fa-undo fa-fw" />&#xa0;
+                    <h:outputText value="Cancel" />
+                  </h:commandLink>
+                </h:panelGrid>
+
+              </h:panelGroup>
 
             </h:panelGroup>
 
-            <h:messages globalOnly="true" layout="table" styleClass="alert alert-danger"/>
+            <h:messages globalOnly="true" layout="table" infoClass="alert alert-success" errorClass="alert alert-danger" warnClass="alert alert-warning"/>
           </h:form>
         </h:panelGroup>
         
@@ -924,75 +954,103 @@
           <h:form id="assignProfessorForm">
             <h:panelGroup rendered="#{externalContext.userPrincipal ne null and request.isUserInRole('ADMIN_ROLE')}">
 
-              <h:panelGrid columns="1" cellpadding="10">
+              <!-- Search/Select Field at Top -->
+              <h:panelGroup class="input-group" style="margin-bottom: 10px;">
+                <h:inputText id="ap_search"
+                             styleClass="form-control placeholder-darkgray"
+                             placeholder="Assign Professor"
+                             value=""/>
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i class="fa fa-chevron-down"/>
+                  </span>
+                </div>
+              </h:panelGroup>
+              
+              <h:commandButton value="Submit" styleClass="btn btn-secondary" style="margin-bottom: 20px;"/>
 
-                <!-- Student Id -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="ap-student-addon">
-                      <i class="fa fa-user fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="ap_studentId"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="ap-student-addon"
-                               value="#{assignProfessorView.studentId}"
-                               validatorMessage="Please enter a valid student id">
-                    <f:validateLongRange minimum="1" />
-                  </h:inputText>
+              <!-- Form Section with Icon and Label -->
+              <h:panelGroup style="margin-top: 20px; border-top: 2px solid #007bff; padding-top: 15px;">
+                <h:panelGroup style="margin-bottom: 15px;">
+                  <i class="fa fa-user fa-fw" style="color: #007bff;"/>&#xa0;
+                  <h:outputText value="Assign Professor" style="color: #007bff; font-weight: bold;"/>
                 </h:panelGroup>
-                <h:message for="ap_studentId" style="color:red" />
 
-                <!-- Course Id -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="ap-course-addon">
-                      <i class="fas fa-book fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="ap_courseId"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="ap-course-addon"
-                               value="#{assignProfessorView.courseId}"
-                               validatorMessage="Please enter a valid course id">
-                    <f:validateLongRange minimum="1" />
-                  </h:inputText>
-                </h:panelGroup>
-                <h:message for="ap_courseId" style="color:red" />
+                <h:panelGrid columns="1" cellpadding="10">
 
-                <!-- Professor Id -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="ap-prof-addon">
-                      <i class="fas fa-chalkboard-teacher fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="ap_professorId"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="ap-prof-addon"
-                               value="#{assignProfessorView.professorId}"
-                               validatorMessage="Please enter a valid professor id">
-                    <f:validateLongRange minimum="1" />
-                  </h:inputText>
-                </h:panelGroup>
-                <h:message for="ap_professorId" style="color:red" />
+                  <!-- Student Id -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="ap-student-addon">
+                        <i class="fa fa-user fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="ap_studentId"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="ap-student-addon"
+                                 value="#{assignProfessorView.studentId}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid student id">
+                      <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="ap_studentId" style="color:red" />
 
-              </h:panelGrid>
+                  <!-- Course Id -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="ap-course-addon">
+                        <i class="fas fa-folder fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="ap_courseId"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="ap-course-addon"
+                                 value="#{assignProfessorView.courseId}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid course id">
+                      <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="ap_courseId" style="color:red" />
 
-              <h:panelGrid id="ap_actions" columns="2" cellpadding="10">
-                <h:commandLink action="#{assignProfessorView.submit()}">
-                  <i class="fa fa-check fa-fw" />&#xa0;
-                  <h:outputText class="text-success" value="Submit" />
-                </h:commandLink>
-                <h:commandLink action="#{assignProfessorView.clear()}" immediate="true">
-                  <i class="fa fa-undo fa-fw" />&#xa0;
-                  <h:outputText class="text-primary" value="Reset" />
-                </h:commandLink>
-              </h:panelGrid>
+                  <!-- Professor Id -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="ap-prof-addon">
+                        <i class="fa fa-user fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="ap_professorId"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="ap-prof-addon"
+                                 value="#{assignProfessorView.professorId}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid professor id">
+                      <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="ap_professorId" style="color:red" />
+
+                </h:panelGrid>
+
+                <h:panelGrid id="ap_actions" columns="2" cellpadding="10" style="margin-top: 15px;">
+                  <h:commandLink action="#{assignProfessorView.submit()}">
+                    <i class="fa fa-user fa-fw" />&#xa0;
+                    <h:outputText class="text-success" value="Submit" />
+                  </h:commandLink>
+                  <h:commandLink action="#{assignProfessorView.clear()}" immediate="true">
+                    <f:ajax execute="@this" render="@form" />
+                    <i class="fa fa-undo fa-fw" />&#xa0;
+                    <h:outputText class="text-primary" value="Cancel" />
+                  </h:commandLink>
+                </h:panelGrid>
+
+              </h:panelGroup>
 
             </h:panelGroup>
 
-            <h:messages globalOnly="true" layout="table" styleClass="alert alert-danger"/>
+            <h:messages globalOnly="true" layout="table" infoClass="alert alert-success" errorClass="alert alert-danger" warnClass="alert alert-warning"/>
           </h:form>
         </h:panelGroup>
         
@@ -1001,79 +1059,115 @@
           <h:form id="assignGradeForm">
             <h:panelGroup rendered="#{externalContext.userPrincipal ne null and request.isUserInRole('ADMIN_ROLE')}">
 
-              <h:panelGrid columns="1" cellpadding="10">
+              <!-- Search/Select Field at Top -->
+              <h:panelGroup class="input-group" style="margin-bottom: 10px;">
+                <h:inputText id="ag_search"
+                             styleClass="form-control placeholder-darkgray"
+                             placeholder="Assign Grade"
+                             value=""/>
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i class="fa fa-chevron-down"/>
+                  </span>
+                </div>
+              </h:panelGroup>
+              
+              <h:commandButton value="Submit" styleClass="btn btn-secondary" style="margin-bottom: 20px;"/>
 
-                <!-- Student Id -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="ag-student-addon">
-                      <i class="fa fa-user fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="ag_studentId"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="ag-student-addon"
-                               value="#{assignGradeView.studentId}"
-                               validatorMessage="Please enter a valid student id">
-                    <f:validateLongRange minimum="1" />
-                  </h:inputText>
+              <!-- Form Section with Icon and Label -->
+              <h:panelGroup style="margin-top: 20px; border-top: 2px solid #007bff; padding-top: 15px;">
+                <h:panelGroup style="margin-bottom: 15px;">
+                  <i class="fas fa-ruler fa-fw" style="color: #007bff;"/>&#xa0;
+                  <h:outputText value="Assign Grade" style="color: #007bff; font-weight: bold;"/>
                 </h:panelGroup>
-                <h:message for="ag_studentId" style="color:red" />
 
-                <!-- Course Id -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="ag-course-addon">
-                      <i class="fas fa-book fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="ag_courseId"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="ag-course-addon"
-                               value="#{assignGradeView.courseId}"
-                               validatorMessage="Please enter a valid course id">
-                    <f:validateLongRange minimum="1" />
-                  </h:inputText>
-                </h:panelGroup>
-                <h:message for="ag_courseId" style="color:red" />
+                <h:panelGrid columns="1" cellpadding="10">
 
-                <!-- Letter Grade -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="ag-grade-addon">
-                      <i class="fas fa-star fa-fw"/>
-                    </span>
-                  </div>
-                  <h:selectOneMenu id="ag_letterGrade"
-                                   styleClass="form-control placeholder-darkgray"
-                                   aria-describedby="ag-grade-addon"
-                                   value="#{assignGradeView.letterGrade}">
-                    <f:selectItem itemLabel="Select Grade" itemDisabled="true" />
-                    <f:selectItem itemValue="A" itemLabel="A" />
-                    <f:selectItem itemValue="B" itemLabel="B" />
-                    <f:selectItem itemValue="C" itemLabel="C" />
-                    <f:selectItem itemValue="D" itemLabel="D" />
-                    <f:selectItem itemValue="F" itemLabel="F" />
-                  </h:selectOneMenu>
-                </h:panelGroup>
-                <h:message for="ag_letterGrade" style="color:red" />
+                  <!-- Student Id -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="ag-student-addon">
+                        <i class="fa fa-user fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="ag_studentId"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="ag-student-addon"
+                                 value="#{assignGradeView.studentId}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid student id">
+                      <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="ag_studentId" style="color:red" />
 
-              </h:panelGrid>
+                  <!-- Course Id -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="ag-course-addon">
+                        <i class="fas fa-folder fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="ag_courseId"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="ag-course-addon"
+                                 value="#{assignGradeView.courseId}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid course id">
+                      <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="ag_courseId" style="color:red" />
 
-              <h:panelGrid id="ag_actions" columns="2" cellpadding="10">
-                <h:commandLink action="#{assignGradeView.submit()}">
-                  <i class="fa fa-check fa-fw" />&#xa0;
-                  <h:outputText class="text-success" value="Submit" />
-                </h:commandLink>
-                <h:commandLink action="#{assignGradeView.clear()}" immediate="true">
-                  <i class="fa fa-undo fa-fw" />&#xa0;
-                  <h:outputText class="text-primary" value="Reset" />
-                </h:commandLink>
-              </h:panelGrid>
+                  <!-- Letter Grade -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="ag-grade-addon">
+                        <i class="fas fa-ruler fa-fw"/>
+                      </span>
+                    </div>
+                    <h:selectOneMenu id="ag_letterGrade"
+                                     styleClass="form-control placeholder-darkgray"
+                                     aria-describedby="ag-grade-addon"
+                                     value="#{assignGradeView.letterGrade}">
+                      <f:selectItem itemLabel="Letter Grade" itemValue="" />
+                      <f:selectItem itemValue="A+" itemLabel="A+" />
+                      <f:selectItem itemValue="A" itemLabel="A" />
+                      <f:selectItem itemValue="A-" itemLabel="A-" />
+                      <f:selectItem itemValue="B+" itemLabel="B+" />
+                      <f:selectItem itemValue="B" itemLabel="B" />
+                      <f:selectItem itemValue="B-" itemLabel="B-" />
+                      <f:selectItem itemValue="C+" itemLabel="C+" />
+                      <f:selectItem itemValue="C" itemLabel="C" />
+                      <f:selectItem itemValue="C-" itemLabel="C-" />
+                      <f:selectItem itemValue="D+" itemLabel="D+" />
+                      <f:selectItem itemValue="D" itemLabel="D" />
+                      <f:selectItem itemValue="D-" itemLabel="D-" />
+                      <f:selectItem itemValue="F" itemLabel="F" />
+                      <f:selectItem itemValue="FSP" itemLabel="FSP" />
+                    </h:selectOneMenu>
+                  </h:panelGroup>
+                  <h:message for="ag_letterGrade" style="color:red" />
+
+                </h:panelGrid>
+
+                <h:panelGrid id="ag_actions" columns="2" cellpadding="10" style="margin-top: 15px;">
+                  <h:commandLink action="#{assignGradeView.submit()}">
+                    <i class="fa fa-check fa-fw" />&#xa0;
+                    <h:outputText class="text-success" value="Submit" />
+                  </h:commandLink>
+                  <h:commandLink action="#{assignGradeView.clear()}" immediate="true">
+                    <f:ajax execute="@this" render="@form" />
+                    <i class="fa fa-undo fa-fw" />&#xa0;
+                    <h:outputText class="text-primary" value="Cancel" />
+                  </h:commandLink>
+                </h:panelGrid>
+
+              </h:panelGroup>
 
             </h:panelGroup>
 
-            <h:messages globalOnly="true" layout="table" styleClass="alert alert-danger"/>
+            <h:messages globalOnly="true" layout="table" infoClass="alert alert-success" errorClass="alert alert-danger" warnClass="alert alert-warning"/>
           </h:form>
         </h:panelGroup>
         
@@ -1082,58 +1176,85 @@
           <h:form id="clubMembershipForm">
             <h:panelGroup rendered="#{externalContext.userPrincipal ne null and request.isUserInRole('ADMIN_ROLE')}">
 
-              <h:panelGrid columns="1" cellpadding="10">
+              <!-- Search/Select Field at Top -->
+              <h:panelGroup class="input-group" style="margin-bottom: 10px;">
+                <h:inputText id="cm_search"
+                             styleClass="form-control placeholder-darkgray"
+                             placeholder="Club Membership Registration"
+                             value=""/>
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i class="fa fa-chevron-down"/>
+                  </span>
+                </div>
+              </h:panelGroup>
+              
+              <h:commandButton value="Submit" styleClass="btn btn-secondary" style="margin-bottom: 20px;"/>
 
-                <!-- Student Id -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="cm-student-addon">
-                      <i class="fa fa-user fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="cm_studentId"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="cm-student-addon"
-                               value="#{clubMembershipView.studentId}"
-                               validatorMessage="Please enter a valid student id">
-                    <f:validateLongRange minimum="1" />
-                  </h:inputText>
+              <!-- Form Section with Icon and Label -->
+              <h:panelGroup style="margin-top: 20px; border-top: 2px solid #007bff; padding-top: 15px;">
+                <h:panelGroup style="margin-bottom: 15px;">
+                  <i class="fas fa-cogs fa-fw" style="color: #007bff;"/>&#xa0;
+                  <h:outputText value="Club Membership Registration" style="color: #007bff; font-weight: bold;"/>
                 </h:panelGroup>
-                <h:message for="cm_studentId" style="color:red" />
 
-                <!-- Club Id -->
-                <h:panelGroup class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="cm-club-addon">
-                      <i class="fas fa-users fa-fw"/>
-                    </span>
-                  </div>
-                  <h:inputText id="cm_clubId"
-                               styleClass="form-control placeholder-darkgray"
-                               aria-describedby="cm-club-addon"
-                               value="#{clubMembershipView.clubId}"
-                               validatorMessage="Please enter a valid club id">
-                    <f:validateLongRange minimum="1" />
-                  </h:inputText>
-                </h:panelGroup>
-                <h:message for="cm_clubId" style="color:red" />
+                <h:panelGrid columns="1" cellpadding="10">
 
-              </h:panelGrid>
+                  <!-- Student Id -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="cm-student-addon">
+                        <i class="fa fa-user fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="cm_studentId"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="cm-student-addon"
+                                 value="#{clubMembershipView.studentId}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid student id">
+                      <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="cm_studentId" style="color:red" />
 
-              <h:panelGrid id="cm_actions" columns="2" cellpadding="10">
-                <h:commandLink action="#{clubMembershipView.submit()}">
-                  <i class="fa fa-check fa-fw" />&#xa0;
-                  <h:outputText class="text-success" value="Submit" />
-                </h:commandLink>
-                <h:commandLink action="#{clubMembershipView.clear()}" immediate="true">
-                  <i class="fa fa-undo fa-fw" />&#xa0;
-                  <h:outputText class="text-primary" value="Reset" />
-                </h:commandLink>
-              </h:panelGrid>
+                  <!-- Club Id -->
+                  <h:panelGroup class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="cm-club-addon">
+                        <i class="fas fa-coins fa-fw"/>
+                      </span>
+                    </div>
+                    <h:inputText id="cm_clubId"
+                                 styleClass="form-control placeholder-darkgray"
+                                 aria-describedby="cm-club-addon"
+                                 value="#{clubMembershipView.clubId}"
+                                 placeholder="0"
+                                 validatorMessage="Please enter a valid club id">
+                      <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                  </h:panelGroup>
+                  <h:message for="cm_clubId" style="color:red" />
+
+                </h:panelGrid>
+
+                <h:panelGrid id="cm_actions" columns="2" cellpadding="10" style="margin-top: 15px;">
+                  <h:commandLink action="#{clubMembershipView.submit()}" styleClass="btn btn-primary">
+                    <i class="fas fa-cogs fa-fw" />&#xa0;
+                    <h:outputText class="text-success" value="Submit" />
+                  </h:commandLink>
+                  <h:commandLink action="#{clubMembershipView.clear()}" immediate="true" styleClass="btn btn-success">
+                    <f:ajax execute="@this" render="@form" />
+                    <i class="fa fa-undo fa-fw" />&#xa0;
+                    <h:outputText value="Cancel" />
+                  </h:commandLink>
+                </h:panelGrid>
+
+              </h:panelGroup>
 
             </h:panelGroup>
 
-            <h:messages globalOnly="true" layout="table" styleClass="alert alert-danger"/>
+            <h:messages globalOnly="true" layout="table" infoClass="alert alert-success" errorClass="alert alert-danger" warnClass="alert alert-warning"/>
           </h:form>
         </h:panelGroup>
         

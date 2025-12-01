@@ -24,6 +24,7 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 
@@ -152,6 +153,64 @@ public class CourseRegistrationController implements Serializable, MyConstants {
             facesContext.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Error updating course registration: " + e.getMessage(), null));
+        }
+        return null;
+    }
+
+    public CourseRegistration assignProfessorToCourseRegistration(int studentId, int courseId, int professorId) {
+        try {
+            // Create a minimal Professor object with just the ID
+            com.algonquincollege.cst8277.entity.Professor professor = new com.algonquincollege.cst8277.entity.Professor();
+            professor.setId(professorId);
+            
+            Response response = webTarget
+                    .register(auth)
+                    .path(COURSE_REGISTRATION_RESOURCE_NAME + SLASH + "student" + SLASH + studentId + SLASH + "course" + SLASH + courseId)
+                    .request(MediaType.APPLICATION_JSON)
+                    .put(Entity.entity(professor, MediaType.APPLICATION_JSON));
+
+            if (response.getStatus() == 200) {
+                CourseRegistration updated = response.readEntity(CourseRegistration.class);
+                facesContext.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                "Professor assigned successfully", null));
+                return updated;
+            }
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Failed to assign professor. Status: " + response.getStatus(), null));
+        }
+        catch (Exception e) {
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error assigning professor: " + e.getMessage(), null));
+        }
+        return null;
+    }
+
+    public CourseRegistration assignGradeToCourseRegistration(int studentId, int courseId, String letterGrade) {
+        try {
+            Response response = webTarget
+                    .register(auth)
+                    .path(COURSE_REGISTRATION_RESOURCE_NAME + SLASH + "student" + SLASH + studentId + SLASH + "course" + SLASH + courseId)
+                    .request(MediaType.APPLICATION_JSON)
+                    .put(Entity.entity(letterGrade, MediaType.TEXT_PLAIN));
+
+            if (response.getStatus() == 200) {
+                CourseRegistration updated = response.readEntity(CourseRegistration.class);
+                facesContext.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                "Grade assigned successfully", null));
+                return updated;
+            }
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Failed to assign grade. Status: " + response.getStatus(), null));
+        }
+        catch (Exception e) {
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error assigning grade: " + e.getMessage(), null));
         }
         return null;
     }

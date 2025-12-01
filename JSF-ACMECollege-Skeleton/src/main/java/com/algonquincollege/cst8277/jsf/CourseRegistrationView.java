@@ -59,7 +59,7 @@ public class CourseRegistrationView implements Serializable {
 
     public void submit() {
         if (studentId == null || courseId == null || year == null ||
-            semester == null || semester.isBlank()) {
+            semester == null || semester.trim().isEmpty()) {
             facesContext.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "All fields are required for course registration", null));

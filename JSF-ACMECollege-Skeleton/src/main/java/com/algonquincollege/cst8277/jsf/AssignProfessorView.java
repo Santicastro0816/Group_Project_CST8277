@@ -2,8 +2,6 @@ package com.algonquincollege.cst8277.jsf;
 
 import java.io.Serializable;
 
-import com.algonquincollege.cst8277.entity.CourseRegistration;
-import com.algonquincollege.cst8277.entity.Professor;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
@@ -55,22 +53,7 @@ public class AssignProfessorView implements Serializable {
             return;
         }
 
-        CourseRegistration registration =
-                courseRegistrationController.findCourseRegistration(studentId, courseId);
-
-        if (registration == null) {
-            // controller already logged an error
-            facesContext.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "No course registration found for given student and course", null));
-            return;
-        }
-
-        Professor prof = new Professor();
-        prof.setId(professorId);
-        registration.setProfessor(prof);
-
-        courseRegistrationController.updateCourseRegistration(registration);
+        courseRegistrationController.assignProfessorToCourseRegistration(studentId, courseId, professorId);
         clear();
     }
 

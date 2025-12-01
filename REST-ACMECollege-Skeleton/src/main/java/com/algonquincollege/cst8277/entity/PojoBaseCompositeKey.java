@@ -31,7 +31,7 @@ public abstract class PojoBaseCompositeKey<ID extends Serializable> implements S
 	private static final long serialVersionUID = 1L;
 
 	@Version
-	protected int version;
+	protected int version = 1;
 
 	@Column(name = "created", insertable = true, updatable = false)
 	protected LocalDateTime created;
